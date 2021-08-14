@@ -1,5 +1,4 @@
 import uuid
-from decimal import Decimal
 from enum import Enum
 
 from devispora.ovo_bases.tools.time_service import get_event_day_from_timestamp
