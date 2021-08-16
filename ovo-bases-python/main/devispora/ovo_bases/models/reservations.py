@@ -6,7 +6,7 @@ from devispora.ovo_bases.tools.time_service import get_event_day_from_timestamp
 reservation_table_name = 'reservations'
 
 
-class ReservationContext(Enum):
+class ReservationContext(str, Enum):
     """"Needs to mirror the names of reservation"""
     # todo create test that verifies that reservation contains this.
     ReservationID = 'reservation_id'

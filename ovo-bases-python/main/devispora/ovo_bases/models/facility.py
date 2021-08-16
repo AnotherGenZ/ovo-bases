@@ -10,6 +10,14 @@ class FacilityProperties(str, Enum):
     FacilityLongName = 'facility_long_name'
 
 
+class ZoneIdTranslation(int, Enum):
+    Indar = 2
+    Hossin = 4
+    Amerish = 6
+    Esamir = 8
+    Koltyr = 131086
+
+
 class Facility:
     def __init__(self, zone_id: int, facility_id: int,
                  facility_name: str, facility_type_id: int, facility_type: str, facility_name_long: str = None):

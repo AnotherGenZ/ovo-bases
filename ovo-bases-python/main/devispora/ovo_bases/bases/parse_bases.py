@@ -1,6 +1,6 @@
 from devispora.ovo_bases.bases.extra_bases import additional_bases
 from devispora.ovo_bases.bases.load_bases import load_facilities_file
-from devispora.ovo_bases.bases.models.facility import FacilityProperties
+from devispora.ovo_bases.models.facility import FacilityProperties
 
 
 class BasesParser:

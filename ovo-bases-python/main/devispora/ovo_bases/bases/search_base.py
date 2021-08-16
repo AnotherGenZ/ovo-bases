@@ -1,4 +1,4 @@
-from devispora.ovo_bases.bases.models.facility import Facility, FacilityProperties
+from devispora.ovo_bases.models.facility import Facility, FacilityProperties
 
 
 def retrieve_base_by_id(facilities: [], base_id: int) -> Facility:
