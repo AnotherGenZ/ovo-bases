@@ -1,19 +1,10 @@
 import json
 
+from devispora.ovo_bases.services.availability_service import process_base_request
+
 
 def lambda_handler(event, context):
     #headers = event['headers']
-    #raw_body = event['body']
-    #print(raw_body)
-
-    # todo so pog:
-    #  provides list with bases, type POG, wanted #now. a.k.a. between now and 1 hour of 45 minutes.
-    return {
-        "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": json.dumps({
-            "Region ": "ok"
-        })
-    }
+    # todo jwt validation
+    raw_body = event['body']
+    return process_base_request(raw_body)

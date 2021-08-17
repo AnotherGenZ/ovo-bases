@@ -3,7 +3,7 @@ import os
 import unittest
 
 from devispora.ovo_bases.bases.parse_bases import BasesParser
-from devispora.ovo_bases.exception.exceptions import ReservationException, ReservationExceptionMessage
+from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
 from devispora.ovo_bases.models.reservations import ReservationContext
 from devispora.ovo_bases.services.reservation_service import create_temp_reservation
 
@@ -25,7 +25,7 @@ class ReservationServiceTest(unittest.TestCase):
     def test_cast_reservation_missing(self):
         empty_body = {}
         self.assertRaisesRegex(
-            ReservationException, ReservationExceptionMessage.MissingReservationPart,
+            RequestException, RequestExceptionMessage.MissingReservationPart,
             create_temp_reservation, base_list=create_base_list(), raw_reservation=empty_body
         )
 

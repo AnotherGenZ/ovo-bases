@@ -1,6 +1,6 @@
 from devispora.ovo_bases.bases.parse_bases import BasesParser
 from devispora.ovo_bases.bases.search_base import retrieve_base_by_id
-from devispora.ovo_bases.exception.exceptions import ReservationException, ReservationExceptionMessage
+from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
 from devispora.ovo_bases.models.facility_helper import find_reservation_continent_by_zone_id
 from devispora.ovo_bases.models.reservations import Reservation, ReservationContext
 from devispora.ovo_bases.validation.reservation_validation import validate_basic_time_rules
@@ -35,4 +35,4 @@ def create_temp_reservation(base_list: BasesParser, raw_reservation: {}) -> Rese
             end_time=raw_reservation[ReservationContext.EndTime.value]
         )
     except KeyError as ke:
-        raise ReservationException(ReservationExceptionMessage.MissingReservationPart, ke.args[0])
+        raise RequestException(RequestExceptionMessage.MissingReservationPart, ke.args[0])

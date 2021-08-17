@@ -1,6 +1,6 @@
 import unittest
 
-from devispora.ovo_bases.exception.exceptions import ReservationException, ReservationExceptionMessage
+from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
 from devispora.ovo_bases.models.reservations import Reservation, ReservationContinent, ReservationType
 from devispora.ovo_bases.tools.time_service import day_in_seconds
 from devispora.ovo_bases.validation.reservation_validation import start_not_in_long_past, create_current_epoch, \
@@ -20,7 +20,7 @@ class ReservationValidationTest(unittest.TestCase):
             end_time=12456789
         )
         self.assertRaisesRegex(
-            ReservationException, ReservationExceptionMessage.MoreThanOneHourAgo,
+            RequestException, RequestExceptionMessage.MoreThanOneHourAgo,
             start_not_in_long_past, reservation=bad_reservation
         )
 
@@ -58,7 +58,7 @@ class ReservationValidationTest(unittest.TestCase):
             end_time=12456789
         )
         self.assertRaisesRegex(
-            ReservationException, ReservationExceptionMessage.StartAfterEnd,
+            RequestException, RequestExceptionMessage.StartAfterEnd,
             starts_before_end, reservation=bad_reservation
         )
 
@@ -83,7 +83,7 @@ class ReservationValidationTest(unittest.TestCase):
             end_time=12456789 + (day_in_seconds * 3) + 1
         )
         self.assertRaisesRegex(
-            ReservationException, ReservationExceptionMessage.MoreThanThreeDAys,
+            RequestException, RequestExceptionMessage.MoreThanThreeDAys,
             start_not_far_from_end, reservation=bad_reservation
         )
 
