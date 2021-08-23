@@ -3,16 +3,15 @@ from devispora.ovo_bases.bases.load_bases import load_facilities_file
 from devispora.ovo_bases.models.facility import FacilityProperties
 
 
-class BasesParser:
-
-    def __init__(self):
-        self.facility_json = load_facilities_file()
+class BaseParser:
+    stored_facilities = []
 
     def create_base_list(self) -> {}:
-        facilities = self.facility_json['map_region_list']
-        bases = parse_bases(facilities)
-        bases.extend(load_extra_bases())
-        return bases
+        facility_json = load_facilities_file()
+        facilities_section = facility_json['map_region_list']
+        loaded_bases = parse_bases(facilities_section)
+        loaded_bases.extend(load_extra_bases())
+        self.stored_facilities = loaded_bases
 
 
 def parse_bases(facilities) -> {}:

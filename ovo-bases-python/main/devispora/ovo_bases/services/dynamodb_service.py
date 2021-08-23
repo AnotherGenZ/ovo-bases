@@ -41,8 +41,8 @@ def put_reservation(reservation: Reservation):
             ReservationContext.BaseID.value: reservation.base_id,
             ReservationContext.Continent.value: reservation.continent,
             ReservationContext.GroupName.value: reservation.group_name,
-            ReservationContext.EventType.value: reservation.event_type,
-            ReservationContext.EventDay.value: reservation.event_day,
+            ReservationContext.ReservationType.value: reservation.event_type,
+            ReservationContext.ReservationDay.value: reservation.event_day,
             ReservationContext.StartTime.value: reservation.start_time,
             ReservationContext.EndTime.value: reservation.end_time
         }

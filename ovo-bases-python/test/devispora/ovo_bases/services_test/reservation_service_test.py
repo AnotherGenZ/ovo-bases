@@ -1,38 +1,35 @@
-import json
-import os
 import unittest
 
-from devispora.ovo_bases.bases.parse_bases import BasesParser
-from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
-from devispora.ovo_bases.models.reservations import ReservationContext
-from devispora.ovo_bases.services.reservation_service import create_temp_reservation
+from devispora.ovo_bases.models.facility import Facility
+from devispora.ovo_bases.models.incoming_request import IncomingRequest, RequestType
+from devispora.ovo_bases.models.reservations import ReservationContext, ReservationType
+from devispora.ovo_bases.models.helpers.reservation_helper import create_temp_reservations
 
 
 class ReservationServiceTest(unittest.TestCase):
 
-    def test_cast_reservation_succeed(self):
-        test_body = {
-            ReservationContext.BaseID.value: 266000,
-            ReservationContext.EventType.value: 'scrim',
-            ReservationContext.GroupName.value: 'Test',
-            ReservationContext.StartTime.value: 12456789,
-            ReservationContext.EndTime.value: 12456780
-        }
-        json_body = json.loads(json.dumps(test_body))
-        result = create_temp_reservation(create_base_list(), json_body)
-        self.assertEqual('Test', result.group_name)
-
-    def test_cast_reservation_missing(self):
-        empty_body = {}
-        self.assertRaisesRegex(
-            RequestException, RequestExceptionMessage.MissingReservationPart,
-            create_temp_reservation, base_list=create_base_list(), raw_reservation=empty_body
+    def test_cast_reservations_succeed(self):
+        """We're asserting here that the models map correctly, and it will break if (accidental) changes are made"""
+        # Arrange
+        start_time = 12456780
+        end_time = 12456789
+        group_name = 'Test'
+        test_request = IncomingRequest(
+            facilities=[Facility(2, 1, 'basename', 1, 'basetype')],
+            reservation_type=ReservationType.Scrim,
+            request_type=RequestType.Availability,
+            start_time=start_time,
+            end_time=end_time,
+            group_name=group_name
         )
-
-
-def create_base_list():
-    os.environ['MAP_REGION_LOCATION'] = '../../../resources/map_region.json'
-    return BasesParser().create_base_list()
+        # Act
+        result = create_temp_reservations(test_request)
+        # Assert
+        self.assertEqual(1, len(result))
+        self.assertEqual(group_name, result[0].group_name)
+        self.assertEqual(ReservationType.Scrim, result[0].reservation_type)
+        self.assertEqual(start_time, result[0].start_time)
+        self.assertEqual(end_time, result[0].end_time)
 
 
 if __name__ == '__main__':

@@ -1,17 +1,11 @@
 import datetime
 
 from devispora.ovo_bases.exception.exceptions import RequestExceptionMessage, RequestException
-from devispora.ovo_bases.models.reservations import Reservation
+from devispora.ovo_bases.models.incoming_request import IncomingRequest
 from devispora.ovo_bases.tools.time_service import one_hour_in_seconds, three_days
 
 
-class ReservationValidation:
-    def __init__(self, valid: bool, error_message: RequestExceptionMessage = None):
-        self.valid = valid
-        self.error_message = error_message
-
-
-def validate_basic_time_rules(reservation: Reservation) -> ReservationValidation:
+def validate_basic_time_rules(reservation: IncomingRequest):
     """
     Validates if the reservation respects basic time rules
     """
@@ -19,16 +13,15 @@ def validate_basic_time_rules(reservation: Reservation) -> ReservationValidation
         start_not_in_long_past(reservation)
         starts_before_end(reservation)
         start_not_far_from_end(reservation)
-        return ReservationValidation(valid=True)
-    except RequestException as te:
-        return ReservationValidation(valid=False, error_message=te.message)
+    except RequestException:
+        raise
 
 
-def start_not_in_long_past(reservation: Reservation) -> bool:
+def start_not_in_long_past(incoming_request: IncomingRequest) -> bool:
     """Check if the reservation start time is not longer than 1 hour ago"""
     now_timestamp = create_current_epoch()
-    difference = reservation.start_time - now_timestamp
-    if reservation.start_time > now_timestamp:
+    difference = incoming_request.start_time - now_timestamp
+    if incoming_request.start_time > now_timestamp:
         return True
     elif abs(difference) - one_hour_in_seconds >= 0:
         raise RequestException(message=RequestExceptionMessage.MoreThanOneHourAgo)
@@ -36,18 +29,18 @@ def start_not_in_long_past(reservation: Reservation) -> bool:
         return True
 
 
-def start_not_far_from_end(reservation: Reservation) -> bool:
+def start_not_far_from_end(incoming_request: IncomingRequest) -> bool:
     """Reservations cannot take longer than three days"""
-    day_difference = reservation.end_time - reservation.start_time
+    day_difference = incoming_request.end_time - incoming_request.start_time
     if day_difference > three_days:
         raise RequestException(message=RequestExceptionMessage.MoreThanThreeDAys)
     else:
         return True
 
 
-def starts_before_end(reservation: Reservation) -> bool:
+def starts_before_end(incoming_request: IncomingRequest) -> bool:
     """Check if the reservation start time is not after the end time"""
-    if reservation.start_time > reservation.end_time:
+    if incoming_request.start_time > incoming_request.end_time:
         raise RequestException(message=RequestExceptionMessage.StartAfterEnd)
     else:
         return True

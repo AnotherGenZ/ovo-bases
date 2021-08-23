@@ -13,8 +13,8 @@ class ReservationContext(str, Enum):
     BaseID = 'base_id'
     Continent = 'continent'
     GroupName = 'group_name'
-    EventType = 'event_type'
-    EventDay = 'event_day'
+    ReservationType = 'reservation_type'
+    ReservationDay = 'reservation_day'
     StartTime = 'start_time'
     EndTime = 'end_time'
 
@@ -39,16 +39,16 @@ def create_id() -> str:
 
 
 class Reservation:
-    def __init__(self, base_id: int, continent: ReservationContinent, group_name: str, event_type: ReservationType,
-                 start_time: int, end_time: int, event_day: int = None):
+    def __init__(self, facility_id: int, continent: ReservationContinent, group_name: str,
+                 reservation_type: ReservationType, start_time: int, end_time: int, reservation_day: int = None) -> object:
         self.reservation_id = create_id()
-        self.base_id = base_id
+        self.facility_id = facility_id
         self.continent = continent
         self.group_name = group_name
-        self.event_type = event_type
+        self.reservation_type = reservation_type
         self.start_time = start_time
         self.end_time = end_time
-        if event_day is None:
-            self.event_day = get_event_day_from_timestamp(start_time)
+        if reservation_day is None:
+            self.reservation_day = get_event_day_from_timestamp(start_time)
         else:
-            self.event_day = event_day
+            self.reservation_day = reservation_day

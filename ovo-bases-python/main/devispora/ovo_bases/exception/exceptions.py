@@ -11,6 +11,10 @@ class RequestException(Exception):
 
 
 class RequestExceptionMessage(str, Enum):
+    FacilityNotProvided = 'It is required to provide at least one base in the request'
+    FacilityCannotBeFound = 'Could not find the base'
+    FacilitiesStoredNotFound = 'An issue arose when trying to find facilities'
+    IntValueError = 'Expected an int but got something else'
     MissingReservationPart = 'The reservation is missing required information'
     MoreThanOneHourAgo = 'The start_time cannot be more than one hour ago'
     MoreThanThreeDAys = 'The start_time cannot be more than 3 days before the end_time'
