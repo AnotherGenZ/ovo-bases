@@ -41,8 +41,8 @@ def retrieve_reservation_continent(continent: str) -> ReservationContinent:
             return item
 
 
-def check_reservation_day_limit(reservation: Reservation) -> [ReservationContinent]:
-    """"Returns a list of reservations. Depending on the length of the reservation it will return more than one"""
+def split_reservation_when_needed(reservation: Reservation) -> [Reservation]:
+    """"Returns a list of reservations. Depending on the duration of the reservation it will return more than one"""
     start_day = get_event_day_from_timestamp(reservation.start_time)
     end_day = get_event_day_from_timestamp(reservation.end_time)
     if start_day == end_day:
@@ -53,7 +53,6 @@ def check_reservation_day_limit(reservation: Reservation) -> [ReservationContine
 
 def reservation_splitter(reservation: Reservation, start_day: int, end_day: int) -> [Reservation]:
     """"Will split into multiple reservations based on the amount of days required"""
-    # todo create massive amounts of tests for this one
     reservations = []
     checked_day = start_day
     while checked_day <= end_day:
@@ -81,16 +80,6 @@ def create_similar_reservation(old_reservation: Reservation, start_time: int, en
         start_time=start_time,
         end_time=end_time
     )
-
-    # create an array of days for reservations
-    # need to know increments of day
-    # first reservation would be start normal reservation and end of day.
-    # next day would be the end of that reservation
-    # then the following reservation would be until end date or end of *yet* that day.
-    # for every reservation we check if the new end day would be before or after the end_day
-    # if yes, make final reservation, otherwise continue.
-
-    #todo Split them up for every day. For every day create a new reservation, max is 3
 
 
 def create_temp_reservations(incoming_request: IncomingRequest) -> [Reservation]:
