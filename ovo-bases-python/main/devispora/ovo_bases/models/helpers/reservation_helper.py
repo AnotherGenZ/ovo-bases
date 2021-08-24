@@ -1,31 +1,6 @@
 from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
 from devispora.ovo_bases.models.incoming_request import IncomingRequest
-from devispora.ovo_bases.models.reservations import Reservation, ReservationType, ReservationContinent, \
-    ReservationContext
-from devispora.ovo_bases.tools.time_service import get_event_day_from_timestamp, day_in_seconds, grab_next_day
-
-
-def create_reservations_list(dynamodb_items: [dict]) -> [Reservation]:
-    reservation_list = []
-    for item in dynamodb_items:
-        reservation_list.append(reservation_from_dynamodb_dict(item))
-    return reservation_list
-
-
-def reservation_from_dynamodb_dict(reservation_item: dict) -> Reservation:
-    """
-    Transforms the returned object from DynamoDB to the python version of a Reservation.
-    DynamoDB through Boto3 serializes all numbers to Decimal, but we don't like Decimal.
-    """
-    return Reservation(
-        reservation_type=retrieve_reservation_type(reservation_item[ReservationContext.ReservationType]),
-        facility_id=reservation_item[ReservationContext.BaseID].__int__(),
-        continent=retrieve_reservation_continent(reservation_item[ReservationContext.ReservationType.Continent]),
-        group_name=reservation_item[ReservationContext.GroupName],
-        start_time=reservation_item[ReservationContext.StartTime].__int__(),
-        end_time=reservation_item[ReservationContext.EndTime].__int__(),
-        reservation_day=reservation_item[ReservationContext.ReservationType].__int__()
-    )
+from devispora.ovo_bases.models.reservations import Reservation, ReservationType, ReservationContinent
 
 
 def retrieve_reservation_type(reservation_type: str) -> ReservationType:
@@ -39,47 +14,6 @@ def retrieve_reservation_continent(continent: str) -> ReservationContinent:
     for item in ReservationContinent.__members__.values():
         if item.value == continent:
             return item
-
-
-def split_reservation_when_needed(reservation: Reservation) -> [Reservation]:
-    """"Returns a list of reservations. Depending on the duration of the reservation it will return more than one"""
-    start_day = get_event_day_from_timestamp(reservation.start_time)
-    end_day = get_event_day_from_timestamp(reservation.end_time)
-    if start_day == end_day:
-        return [reservation]
-    else:
-        return reservation_splitter(reservation, start_day, end_day)
-
-
-def reservation_splitter(reservation: Reservation, start_day: int, end_day: int) -> [Reservation]:
-    """"Will split into multiple reservations based on the amount of days required"""
-    reservations = []
-    checked_day = start_day
-    while checked_day <= end_day:
-        calibrated_day = grab_next_day(checked_day)
-        if calibrated_day >= reservation.end_time:
-            # make this final reservation
-            reservations.append(create_similar_reservation(reservation, checked_day, reservation.end_time))
-            return reservations
-        else:
-            if len(reservations) == 0:
-                # Drop in the first day
-                reservations.append(create_similar_reservation(reservation, reservation.start_time, calibrated_day))
-            # turn into 1 new reservation and keep iterating.
-            else:
-                reservations.append(create_similar_reservation(reservation, checked_day, calibrated_day))
-            checked_day = calibrated_day
-
-
-def create_similar_reservation(old_reservation: Reservation, start_time: int, end_time: int) -> Reservation:
-    return Reservation(
-        facility_id=old_reservation.facility_id,
-        continent=old_reservation.continent,
-        group_name=old_reservation.group_name,
-        reservation_type=old_reservation.reservation_type,
-        start_time=start_time,
-        end_time=end_time
-    )
 
 
 def create_temp_reservations(incoming_request: IncomingRequest) -> [Reservation]:
