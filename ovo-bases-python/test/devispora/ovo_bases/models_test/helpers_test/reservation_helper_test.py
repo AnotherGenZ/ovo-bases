@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from devispora.ovo_bases.models.helpers.reservation_helper import create_reservations_list, reservation_splitter
 from devispora.ovo_bases.models.reservations import ReservationType, ReservationContinent, Reservation
-from devispora.ovo_bases.tools.time_service import day_in_seconds, get_event_day_from_timestamp
+from devispora.ovo_bases.tools.time_service import day_in_seconds, get_event_day_from_timestamp, one_hour_in_seconds
 
 
 class ReservationHelperTest(unittest.TestCase):
@@ -23,7 +23,7 @@ class ReservationHelperTest(unittest.TestCase):
         self.assertEqual(ReservationContinent.Amerish, result[0].continent)
         self.assertEqual(12456790, result[0].start_time)
 
-    def test_reservation_splitter(self):
+    def test_reservation_splitter_three_reservations(self):
         reservation = Reservation(
             facility_id=234,
             continent=ReservationContinent.Amerish,
@@ -36,8 +36,35 @@ class ReservationHelperTest(unittest.TestCase):
         end_day = get_event_day_from_timestamp(reservation.end_time)
         result = reservation_splitter(reservation, start_day, end_day)
         self.assertEqual(3, len(result))
-        # todo this provides 3 days. We need more tests for a mini-crossover day I guess 23:00 - 01:00?
-        # todo a test for a full weekend. Which means Friday - Monday
+
+    def test_reservation_splitter_two_reservations(self):
+
+        reservation = Reservation(
+            facility_id=234,
+            continent=ReservationContinent.Amerish,
+            start_time=2847000,
+            end_time=2847000 + (one_hour_in_seconds * 4),
+            group_name='Test',
+            reservation_type=ReservationType.POG
+        )
+        start_day = get_event_day_from_timestamp(reservation.start_time)
+        end_day = get_event_day_from_timestamp(reservation.end_time)
+        result = reservation_splitter(reservation, start_day, end_day)
+        self.assertEqual(2, len(result))
+
+    def test_reservation_splitter_four_reservations(self):
+        reservation = Reservation(
+            facility_id=234,
+            continent=ReservationContinent.Amerish,
+            start_time=3192600,
+            end_time=3376200,
+            group_name='Test',
+            reservation_type=ReservationType.POG
+        )
+        start_day = get_event_day_from_timestamp(reservation.start_time)
+        end_day = get_event_day_from_timestamp(reservation.end_time)
+        result = reservation_splitter(reservation, start_day, end_day)
+        self.assertEqual(4, len(result))
 
 
 if __name__ == '__main__':
