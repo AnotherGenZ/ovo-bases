@@ -7,10 +7,11 @@ from jwt.exceptions import DecodeError, InvalidAudienceError
 from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
 from devispora.ovo_bases.models.auth import AuthAudience
 
+SECRET = os.environ['JWT_SECRET']
 
 def validate_jwt(token: str) -> dict[str, Any]:
     try:
-        payload = jwt.decode(token, os.environ['JWT_SECRET'], algorithms=['HS512'], audience=[
+        payload = jwt.decode(token, SECRET, algorithms=['HS512'], audience=[
                              AuthAudience.POG, AuthAudience.OvO, AuthAudience.Admin])
 
         return payload

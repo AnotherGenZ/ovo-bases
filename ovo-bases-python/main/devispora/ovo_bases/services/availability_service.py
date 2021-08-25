@@ -18,7 +18,7 @@ def process_base_request(base_parser: BaseParser, raw_body: {}):
             process_reservation_request(incoming_request)
             pass
     except RequestException as rex:
-        return error_response(rex)
+        return error_response(400, rex)
 
 
 def process_availability_request(incoming_request: IncomingRequest):
