@@ -1,4 +1,4 @@
 jsonpickle==2.0.0
-boto3==1.18.22
+boto3==1.18.29
 requests==2.26.0
 pyjwt==2.1.0
