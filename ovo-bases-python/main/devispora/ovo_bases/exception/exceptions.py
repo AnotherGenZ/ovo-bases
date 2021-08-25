@@ -21,3 +21,5 @@ class RequestExceptionMessage(str, Enum):
     RequestTypeNotProvided = 'A request type must be provided'
     RequestTypeNotRecognised = 'The supplied request type could not be recognised'
     StartAfterEnd = 'The start_time cannot be after the end_time'
+    InvalidAuthAudience = 'Not authorized to use this API'
+    CannotValidateAuthToken = 'Cannot validate auth token'

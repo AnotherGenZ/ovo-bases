@@ -7,9 +7,9 @@ from devispora.ovo_bases.exception.exceptions import RequestException
 content_json = {"content-type": "application/json"}
 
 
-def error_response(rex: RequestException):
+def error_response(status_code: int, rex: RequestException):
     response = {
-        'statusCode': 400,
+        'statusCode': status_code,
         'headers': content_json,
     }
     if rex.additional_message is not None:
