@@ -1,6 +1,6 @@
 from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
 from devispora.ovo_bases.models.incoming_request import IncomingRequest
-from devispora.ovo_bases.models.reservations import Reservation, ReservationType, ReservationContinent
+from devispora.ovo_bases.models.reservations import Reservation, ReservationType, ReservationContinent, ReservationQuery
 
 
 def retrieve_reservation_type(reservation_type: str) -> ReservationType:
@@ -31,3 +31,33 @@ def create_temp_reservations(incoming_request: IncomingRequest) -> [Reservation]
             )
         )
     return reservations
+
+
+def create_reservation_query_pool(reservations: [Reservation]) -> [ReservationQuery]:
+    """Transform the reservations into a dict that can be used to create ReservationQuery objects"""
+    query_dict = create_query_dict(reservations)
+    queries = []
+    for entry in query_dict:
+        if len(query_dict[entry]) > 1:
+            queries.append(ReservationQuery(
+                reservation_day=entry, multi_continent=True)
+            )
+        else:
+            continent_entry = list(query_dict[entry])[0]
+            queries.append(ReservationQuery(
+                reservation_day=entry, multi_continent=False, continent=continent_entry)
+            )
+    return queries
+
+
+def create_query_dict(reservations: [Reservation]) -> dict:
+    """
+    Creates a dict with a set inside of it and will attempt to add to it dynamically.
+    """
+    query_dict = {}
+    for reservation in reservations:
+        if reservation.reservation_day not in query_dict:
+            query_dict[reservation.reservation_day] = {reservation.continent}
+        else:
+            query_dict[reservation.reservation_day].add(reservation.continent)
+    return query_dict

@@ -16,3 +16,7 @@ def grab_next_day(timestamp: int) -> int:
     next_day = timestamp + day_in_seconds
     calibrated_day = get_event_day_from_timestamp(next_day)
     return calibrated_day
+
+
+def get_current_time() -> int:
+    return int(datetime.now(tz=UTC).timestamp())

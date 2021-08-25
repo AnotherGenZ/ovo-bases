@@ -1,3 +1,5 @@
+import datetime
+
 from devispora.ovo_bases.bases.parse_bases import BaseParser
 from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
 from devispora.ovo_bases.models.facility import Facility
@@ -5,6 +7,7 @@ from devispora.ovo_bases.models.helpers.facility_helper import find_facilities
 from devispora.ovo_bases.models.helpers.reservation_helper import retrieve_reservation_type
 from devispora.ovo_bases.models.incoming_request import IncomingRequest, RequestType, IncomingRequestContext
 from devispora.ovo_bases.models.reservations import ReservationContext
+from devispora.ovo_bases.tools.time_service import get_current_time, one_hour_in_seconds
 
 
 def retrieve_request_type(request: str) -> RequestType:
@@ -68,3 +71,10 @@ def parse_incoming_request(base_parser: BaseParser, raw_body: {}) -> IncomingReq
         raise RequestException(RequestExceptionMessage.MissingReservationPart, ke.args[0])
     except RequestException:
         raise
+
+
+def create_pog_adjustments(incoming_request: IncomingRequest):
+    """Updates a request to include current time and + one hour for the future reservation"""
+    current_time = get_current_time()
+    incoming_request.start_time = current_time
+    incoming_request.end_time = current_time + one_hour_in_seconds

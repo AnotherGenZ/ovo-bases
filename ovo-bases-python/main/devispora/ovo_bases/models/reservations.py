@@ -40,7 +40,7 @@ def create_id() -> str:
 
 class Reservation:
     def __init__(self, facility_id: int, continent: ReservationContinent, group_name: str,
-                 reservation_type: ReservationType, start_time: int, end_time: int, reservation_day: int = None) -> object:
+                 reservation_type: ReservationType, start_time: int, end_time: int, reservation_day: int = None):
         self.reservation_id = create_id()
         self.facility_id = facility_id
         self.continent = continent
@@ -52,3 +52,14 @@ class Reservation:
             self.reservation_day = get_event_day_from_timestamp(start_time)
         else:
             self.reservation_day = reservation_day
+
+
+class ReservationQuery:
+    """"
+    Subset of reservation used to query for availability in the continent
+    If multi-continent is enabled
+    """
+    def __init__(self, reservation_day: int, multi_continent: bool, continent: ReservationContinent = None):
+        self.reservation_day = reservation_day
+        self.multi_continent = multi_continent
+        self.continent = continent

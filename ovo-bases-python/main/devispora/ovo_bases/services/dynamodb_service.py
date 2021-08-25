@@ -1,8 +1,10 @@
 import boto3
 from boto3.dynamodb.conditions import Key
 
+from devispora.ovo_bases.models.helpers.dynamodb_reservation_converter import create_reservations_list
+from devispora.ovo_bases.models.helpers.reservation_helper import create_reservation_query_pool
 from devispora.ovo_bases.models.reservations import Reservation, reservation_table_name, ReservationContext, \
-    ReservationContinent
+    ReservationQuery
 
 dynamodb = boto3.resource('dynamodb')
 
@@ -10,27 +12,26 @@ class DynamoDBService:
     pass
 
 
-def reservations_of_day(reservation: Reservation) -> [Reservation]:
+def reservations_of_day(query: ReservationQuery) -> [Reservation]:
     table = dynamodb.Table(reservation_table_name)
+    if query.multi_continent:
+        expression = Key('start_day').eq(query.reservation_day)
+    else:
+        expression = Key('start_day').eq(query.reservation_day) & Key('continent').eq(query.continent)
     response = table.query(
         IndexName='start_day_continent',
-        KeyConditionExpression=Key('start_day').eq(reservation.event_day)
-        & Key('continent').eq(reservation.continent)
+        KeyConditionExpression=expression
     )
     return response['Items']
 
 
-def check_if_available(reservation: Reservation):
-    # we need to check if there's any crossover for the next day
-    # which I guess could be done by cehcking?
-    reservations = reservations_of_day(reservation)
-
-    pass
-    # Predicted timewindow. Maybe 1 day before, one after.
-    # Then filter down if the time period within each of them:
-    # if start time or end time is within start-end time
-    # then scream hell and fury and deny
-    # Secondarily: Risky base-id check. (embed instead of lookup?)
+def retrieve_stored_reservations(incoming_reservation: [Reservation]):
+    query_pool = create_reservation_query_pool(incoming_reservation)
+    stored_reservations = []
+    for query in query_pool:
+        found_reservations = reservations_of_day(query)
+        stored_reservations.extend(create_reservations_list(found_reservations))
+    return stored_reservations
 
 
 def put_reservation(reservation: Reservation):
@@ -38,11 +39,11 @@ def put_reservation(reservation: Reservation):
     response = table.put_item(
         Item={
             ReservationContext.ReservationID.value: reservation.reservation_id,
-            ReservationContext.BaseID.value: reservation.base_id,
+            ReservationContext.BaseID.value: reservation.facility_id,
             ReservationContext.Continent.value: reservation.continent,
             ReservationContext.GroupName.value: reservation.group_name,
-            ReservationContext.ReservationType.value: reservation.event_type,
-            ReservationContext.ReservationDay.value: reservation.event_day,
+            ReservationContext.ReservationType.value: reservation.reservation_type,
+            ReservationContext.ReservationDay.value: reservation.reservation_day,
             ReservationContext.StartTime.value: reservation.start_time,
             ReservationContext.EndTime.value: reservation.end_time
         }

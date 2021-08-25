@@ -2,6 +2,14 @@ from devispora.ovo_bases.models.reservations import Reservation
 from devispora.ovo_bases.tools.time_service import get_event_day_from_timestamp, grab_next_day
 
 
+def split_into_multi_reservations_when_needed(reservations: [Reservation]):
+    """"Returns a list of all reservations. Will multiply reservations if there is a crossover in days"""
+    final_reservations = []
+    for reservation in reservations:
+        final_reservations.extend(split_reservation_when_needed(reservation))
+    return final_reservations
+
+
 def split_reservation_when_needed(reservation: Reservation) -> [Reservation]:
     """"Returns a list of reservations. Depending on the duration of the reservation it will return more than one"""
     start_day = get_event_day_from_timestamp(reservation.start_time)
