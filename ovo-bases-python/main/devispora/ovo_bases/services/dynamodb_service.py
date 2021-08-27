@@ -15,11 +15,11 @@ class DynamoDBService:
 def reservations_of_day(query: ReservationQuery) -> [Reservation]:
     table = dynamodb.Table(reservation_table_name)
     if query.multi_continent:
-        expression = Key('start_day').eq(query.reservation_day)
+        expression = Key('reservation_day').eq(query.reservation_day)
     else:
-        expression = Key('start_day').eq(query.reservation_day) & Key('continent').eq(query.continent)
+        expression = Key('reservation_day').eq(query.reservation_day) & Key('continent').eq(query.continent)
     response = table.query(
-        IndexName='start_day_continent',
+        IndexName='reservation_day_continent',
         KeyConditionExpression=expression
     )
     return response['Items']
@@ -40,18 +40,12 @@ def put_reservation(reservation: Reservation):
         Item={
             ReservationContext.ReservationID.value: reservation.reservation_id,
             ReservationContext.BaseID.value: reservation.facility_id,
-            ReservationContext.Continent.value: reservation.continent,
+            ReservationContext.Continent.value: reservation.continent.value,
             ReservationContext.GroupName.value: reservation.group_name,
-            ReservationContext.ReservationType.value: reservation.reservation_type,
+            ReservationContext.ReservationType.value: reservation.reservation_type.value,
             ReservationContext.ReservationDay.value: reservation.reservation_day,
             ReservationContext.StartTime.value: reservation.start_time,
             ReservationContext.EndTime.value: reservation.end_time
         }
     )
     return response
-
-
-
-
-
-# {'ResponseMetadata': {'RequestId': '3VSI4BO2MQFNAE0LHVA9TQDKMJVV4KQNSO5AEMVJF66Q9ASUAAJG', 'HTTPStatusCode': 200, 'HTTPHeaders': {'server': 'Server', 'date': 'Sat, 24 Jul 2021 03:22:34 GMT', 'content-type': 'application/x-amz-json-1.0', 'content-length': '2', 'connection': 'keep-alive', 'x-amzn-requestid': '3VSI4BO2MQFNAE0LHVA9TQDKMJVV4KQNSO5AEMVJF66Q9ASUAAJG', 'x-amz-crc32': '2745614147'}, 'RetryAttempts': 0}}

@@ -8,10 +8,18 @@ class RequestType(str, Enum):
     Availability = 'availability'
     Reservation = 'reservation'
 
+    def __getstate__(self):
+        """Allows JsonPickle just to retrieve the value"""
+        return self.value
+
 
 class IncomingRequestContext(str, Enum):
     FacilityIds = 'facility_ids'
     RequestType = 'request_type'
+
+    def __getstate__(self):
+        """Allows JsonPickle just to retrieve the value"""
+        return self.value
 
 
 class IncomingRequest:

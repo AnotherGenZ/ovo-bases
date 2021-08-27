@@ -30,16 +30,18 @@ def segmented_checker(
     denied_reservations = []
     for incoming_day in segmented_incoming:
         segmented_day = segmented_incoming[incoming_day]
-        stored_day = segmented_stored[incoming_day]
-        for incoming_reservation in segmented_day:
-            previous_denied_size = len(denied_reservations)
-            for stored_reservation in stored_day:
-                if check_location_conflict(incoming_reservation, stored_reservation):
-                    if check_if_reservation_between(incoming_reservation, stored_reservation):
-                        denied_reservations.append(incoming_reservation)
-            if previous_denied_size is len(denied_reservations):
-                possible_reservations.append(incoming_reservation)
-
+        try:
+            stored_day = segmented_stored[incoming_day]
+            for incoming_reservation in segmented_day:
+                previous_denied_size = len(denied_reservations)
+                for stored_reservation in stored_day:
+                    if check_location_conflict(incoming_reservation, stored_reservation):
+                        if check_if_reservation_between(incoming_reservation, stored_reservation):
+                            denied_reservations.append(incoming_reservation)
+                if previous_denied_size is len(denied_reservations):
+                    possible_reservations.append(incoming_reservation)
+        except KeyError:
+            possible_reservations.extend(segmented_day)
     return AvailabilityResult(possible_reservations, denied_reservations)
 
 

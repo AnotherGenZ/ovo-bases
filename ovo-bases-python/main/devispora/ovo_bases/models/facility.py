@@ -9,6 +9,10 @@ class FacilityProperties(str, Enum):
     FacilityType = 'facility_type'
     FacilityLongName = 'facility_long_name'
 
+    def __getstate__(self):
+        """Allows JsonPickle just to retrieve the value"""
+        return self.value
+
 
 class ZoneIdTranslation(int, Enum):
     Indar = 2

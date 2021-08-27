@@ -1,4 +1,5 @@
 from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
+from devispora.ovo_bases.models.helpers.facility_helper import find_reservation_continent_by_zone_id
 from devispora.ovo_bases.models.incoming_request import IncomingRequest
 from devispora.ovo_bases.models.reservations import Reservation, ReservationType, ReservationContinent, ReservationQuery
 
@@ -23,7 +24,7 @@ def create_temp_reservations(incoming_request: IncomingRequest) -> [Reservation]
         reservations.append(
             Reservation(
                 facility_id=facility.facility_id,
-                continent=facility.zone_id,
+                continent=find_reservation_continent_by_zone_id(facility.zone_id),
                 reservation_type=incoming_request.reservation_type,
                 group_name=incoming_request.group_name,
                 start_time=incoming_request.start_time,

@@ -18,12 +18,20 @@ class ReservationContext(str, Enum):
     StartTime = 'start_time'
     EndTime = 'end_time'
 
+    def __getstate__(self):
+        """Allows JsonPickle just to retrieve the value"""
+        return self.value
+
 
 class ReservationType(str, Enum):
     LargeEvent = 'large_event'
     Scrim = 'scrim'
     Training = 'training'
     POG = 'pog'
+
+    def __getstate__(self):
+        """Allows JsonPickle just to retrieve the value"""
+        return self.value
 
 
 class ReservationContinent(str, Enum):
@@ -32,6 +40,10 @@ class ReservationContinent(str, Enum):
     Amerish = 'amerish'
     Esamir = 'esamir'
     Koltyr = 'koltyr'
+
+    def __getstate__(self):
+        """Allows JsonPickle just to retrieve the value"""
+        return self.value
 
 
 def create_id() -> str:
