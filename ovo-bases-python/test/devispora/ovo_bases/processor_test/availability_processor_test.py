@@ -89,3 +89,5 @@ class AvailabilityProcessorTest(unittest.TestCase):
         # Assert
         self.assertEqual(1, len(result.denied_reservations))
         self.assertEqual(0, len(result.possible_reservations))
+
+# todo add large event test and perhaps some burst small ones
