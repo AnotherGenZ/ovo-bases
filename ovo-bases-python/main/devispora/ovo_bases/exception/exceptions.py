@@ -17,7 +17,7 @@ class RequestExceptionMessage(str, Enum):
     IntValueError = 'Expected an int but got something else'
     MissingReservationPart = 'The reservation is missing required information'
     MoreThanOneHourAgo = 'The start_time cannot be more than one hour ago'
-    MoreThanThreeDAys = 'The start_time cannot be more than 3 days before the end_time'
+    MoreThanThreeDays = 'The start_time cannot be more than 3 days before the end_time'
     RequestTypeNotProvided = 'A request type must be provided'
     RequestTypeNotRecognised = 'The supplied request type could not be recognised'
     StartAfterEnd = 'The start_time cannot be after the end_time'
