@@ -1,5 +1,3 @@
-from enum import IntEnum
-
 
 def additional_bases():
     """"Manually added bases that cannot be retrieved from the REST API"""
