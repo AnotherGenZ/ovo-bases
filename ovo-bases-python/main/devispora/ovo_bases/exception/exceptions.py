@@ -22,4 +22,5 @@ class RequestExceptionMessage(str, Enum):
     RequestTypeNotRecognised = 'The supplied request type could not be recognised'
     StartAfterEnd = 'The start_time cannot be after the end_time'
     InvalidAuthAudience = 'Not authorized to use this API'
+    TokenExpiredMessage = 'Your JWT has expired, you have to reauthorize'
     CannotValidateAuthToken = 'Cannot validate auth token'

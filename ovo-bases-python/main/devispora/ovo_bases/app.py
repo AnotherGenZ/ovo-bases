@@ -9,7 +9,7 @@ base_parser = BaseParser()
 
 def lambda_handler(event, context):
 
-    (authorized, auth, error_response) = auth_request(event['headers']['Authorization'])
+    (authorized, auth, error_response) = auth_request(event['headers']['authorization'])
     if not authorized:
         return error_response
     # todo: Consume auth details

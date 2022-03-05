@@ -2,7 +2,7 @@ import os
 from typing import Any, Dict
 
 import jwt
-from jwt.exceptions import DecodeError, InvalidAudienceError
+from jwt.exceptions import DecodeError, InvalidAudienceError, ExpiredSignatureError
 
 from devispora.ovo_bases.exception.exceptions import RequestException, RequestExceptionMessage
 from devispora.ovo_bases.models.auth import AuthAudience
@@ -16,6 +16,9 @@ def validate_jwt(token: str) -> Dict[str, Any]:
                              AuthAudience.POG, AuthAudience.OvO, AuthAudience.Admin])
 
         return payload
+    except ExpiredSignatureError:
+        raise RequestException(
+            message=RequestExceptionMessage.TokenExpiredMessage)
     except InvalidAudienceError:
         raise RequestException(
             message=RequestExceptionMessage.InvalidAuthAudience)
