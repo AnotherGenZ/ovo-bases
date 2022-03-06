@@ -90,4 +90,6 @@ class AvailabilityProcessorTest(unittest.TestCase):
         self.assertEqual(1, len(result.denied_reservations))
         self.assertEqual(0, len(result.possible_reservations))
 
+# todo add test that takes existing reservations during the same time into account to compare to.
+#  error has been fixed already, but it gotta stay that way.
 # todo add large event test and perhaps some burst small ones

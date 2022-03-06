@@ -61,13 +61,15 @@ def check_location_conflict(incoming_reservation: Reservation, stored_reservatio
     Large events reserve the entire continent and will qualify as a location conflict.
     Special care for Kessel's Crossing and Chac Fusion due to proximity
     """
+
+    stored_id = stored_reservation.facility_id
+    incoming_id = incoming_reservation.facility_id
     if incoming_reservation.continent is stored_reservation.continent:
         if stored_reservation.reservation_type is ReservationType.LargeEvent:
             return True
-        if stored_reservation.facility_id == incoming_reservation.facility_id:
+        if stored_id == incoming_id:
             return True
-        if stored_reservation.facility_id == chac_fusion_facility_id or kessels_facility_id:
-            if incoming_reservation.facility_id == chac_fusion_facility_id or kessels_facility_id:
+        if stored_id == chac_fusion_facility_id or stored_id == kessels_facility_id:
+            if incoming_id == chac_fusion_facility_id or incoming_id == kessels_facility_id:
                 return True
-    else:
-        return False
+    return False
