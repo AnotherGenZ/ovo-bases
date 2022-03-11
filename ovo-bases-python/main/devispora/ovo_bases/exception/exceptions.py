@@ -11,6 +11,7 @@ class RequestException(Exception):
 
 
 class RequestExceptionMessage(str, Enum):
+    AuthorizationHeaderNotProvided = 'Authorization is required to perform this action'
     FacilityNotProvided = 'It is required to provide at least one base in the request'
     FacilityCannotBeFound = 'Could not find the base'
     FacilitiesStoredNotFound = 'An issue arose when trying to find facilities'
