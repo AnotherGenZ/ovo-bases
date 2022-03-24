@@ -12,5 +12,6 @@ class AuthAudience(str, Enum):
 
 
 class Auth:
-    def __init__(self, client: AuthAudience):
+    def __init__(self, client: AuthAudience, token_id: str):
         self.client = client
+        self.token_id = token_id

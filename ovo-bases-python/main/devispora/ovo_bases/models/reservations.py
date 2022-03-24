@@ -10,6 +10,7 @@ class ReservationContext(str, Enum):
     """"Needs to mirror the names of reservation"""
     # todo create test that verifies that reservation contains this.
     ReservationID = 'reservation_id'
+    TokenID = 'token_id'
     BaseID = 'base_id'
     Continent = 'continent'
     GroupName = 'group_name'
@@ -51,6 +52,9 @@ def create_id() -> str:
 
 
 class Reservation:
+
+    token_id: str
+
     def __init__(self, facility_id: int, continent: ReservationContinent, group_name: str,
                  reservation_type: ReservationType, start_time: int, end_time: int, reservation_day: int = None):
         self.reservation_id = create_id()

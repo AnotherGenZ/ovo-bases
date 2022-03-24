@@ -1,5 +1,6 @@
 from devispora.ovo_bases.bases.parse_bases import BaseParser
 from devispora.ovo_bases.exception.exceptions import RequestException
+from devispora.ovo_bases.models.auth import Auth
 from devispora.ovo_bases.models.availability_result import AvailabilityResult
 from devispora.ovo_bases.models.reservation_result import ReservationResult
 from devispora.ovo_bases.models.reservations import ReservationType
@@ -10,14 +11,14 @@ from devispora.ovo_bases.services.dynamodb_service import put_reservation
 from devispora.ovo_bases.services.reservation_service import incoming_reservation_check
 
 
-def process_base_request(base_parser: BaseParser, raw_body: {}):
+def process_base_request(base_parser: BaseParser, raw_body: {}, auth: Auth):
 
     try:
         incoming_request = parse_incoming_request(base_parser, raw_body)
         if incoming_request.request_type is RequestType.Availability:
             return process_availability_request(incoming_request)
         if incoming_request.request_type is RequestType.Reservation:
-            return process_reservation_request(incoming_request)
+            return process_reservation_request(incoming_request, auth)
     except RequestException as rex:
         return error_response(400, rex)
 
@@ -39,7 +40,7 @@ def process_availability(incoming_request: IncomingRequest) -> AvailabilityResul
         return incoming_reservation_check(incoming_request)
 
 
-def process_reservation_request(incoming_request: IncomingRequest):
+def process_reservation_request(incoming_request: IncomingRequest, auth: Auth):
     availability_result = process_availability(incoming_request)
     if len(availability_result.denied_reservations) > 0:
         return generic_response(availability_result)
@@ -47,7 +48,7 @@ def process_reservation_request(incoming_request: IncomingRequest):
         succeeded_reservations = []
         failed_reservations = []
         for reservation in availability_result.possible_reservations:
-            response = put_reservation(reservation)
+            response = put_reservation(reservation, auth)
             if response['ResponseMetadata']['HTTPStatusCode'] == 200:
                 succeeded_reservations.append(reservation)
             else:

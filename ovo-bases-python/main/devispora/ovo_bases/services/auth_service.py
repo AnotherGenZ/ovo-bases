@@ -15,7 +15,7 @@ def retrieve_auth_details(event: dict) -> (bool, str):
 def auth_request(auth_token: str) -> (bool, dict, dict):
     try:
         auth_details = validate_jwt(auth_token)
-        auth = Auth(client=AuthAudience[auth_details['aud']])
+        auth = Auth(client=AuthAudience[auth_details['aud']], token_id=auth_details['ovo_claims']['token_id'])
         return True, auth, None
     except RequestException as error:
         return False, None, error_response(401, error)

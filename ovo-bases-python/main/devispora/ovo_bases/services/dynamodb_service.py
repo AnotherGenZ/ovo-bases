@@ -1,6 +1,7 @@
 import boto3
 from boto3.dynamodb.conditions import Key
 
+from devispora.ovo_bases.models.auth import Auth
 from devispora.ovo_bases.models.helpers.dynamodb_reservation_converter import create_reservations_list
 from devispora.ovo_bases.models.helpers.reservation_helper import create_reservation_query_pool
 from devispora.ovo_bases.models.reservations import Reservation, reservation_table_name, ReservationContext, \
@@ -34,11 +35,12 @@ def retrieve_stored_reservations(incoming_reservation: [Reservation]):
     return stored_reservations
 
 
-def put_reservation(reservation: Reservation):
+def put_reservation(reservation: Reservation, auth: Auth):
     table = dynamodb.Table(reservation_table_name)
     response = table.put_item(
         Item={
             ReservationContext.ReservationID.value: reservation.reservation_id,
+            ReservationContext.TokenID.value: auth.token_id,
             ReservationContext.BaseID.value: reservation.facility_id,
             ReservationContext.Continent.value: reservation.continent.value,
             ReservationContext.GroupName.value: reservation.group_name,

@@ -20,4 +20,4 @@ def lambda_handler(event, context):
         base_parser.create_base_list()
     raw_body = json.loads(event['body'])
     print(raw_body)
-    return process_base_request(base_parser, raw_body)
+    return process_base_request(base_parser, raw_body, auth)
